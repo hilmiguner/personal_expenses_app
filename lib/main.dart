@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:personal_expenses_app/widgets/new_transaction.dart';
 import 'package:personal_expenses_app/widgets/transaction_list.dart';
 import 'package:personal_expenses_app/models/transaction.dart';
+import 'package:personal_expenses_app/widgets/chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,6 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // Transaction(title: "Weekly Groceries", amount: 16.53, date: DateTime.now())
   ];
 
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where(
+      (transaction) {
+        return transaction.date
+            .isAfter(DateTime.now().subtract(Duration(days: 7)));
+      },
+    ).toList();
+  }
+
   void _addNewTransaction(String title, double amount, BuildContext bCtx) {
     List<String> splittedList = amount.toString().split(".");
     String startPart = splittedList[0];
@@ -86,9 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Card(
-              child: Text("CHART!"),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_userTransactions),
           ],
         ),

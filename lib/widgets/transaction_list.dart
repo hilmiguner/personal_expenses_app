@@ -10,7 +10,7 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 775,
+      height: 600,
       child: _userTransactions.isEmpty
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -29,50 +29,39 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemBuilder: ((context, index) {
                 return Card(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      constraints: BoxConstraints(maxWidth: 150),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "\$${_userTransactions[index].amount}",
-                        style: Theme.of(context).textTheme.headline6.apply(
-                            color: Theme.of(context).primaryColor,
-                            fontSizeDelta: 5),
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).primaryColor,
-                          width: 2,
+                  elevation: 5,
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 30,
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: FittedBox(
+                          child: Text("\$${_userTransactions[index].amount}"),
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 50),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _userTransactions[index].title,
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          Text(
-                            DateFormat.yMMMMd()
-                                .format(_userTransactions[index].date),
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline1
-                                .apply(color: Colors.grey),
-                          )
-                        ],
+                    title: Text(
+                      "${_userTransactions[index].title}",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    subtitle: Text(
+                      "${DateFormat("dd.MM.yyyy").format(_userTransactions[index].date)}",
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
+                    trailing: CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 30,
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.delete,
+                          color: Theme.of(context).secondaryHeaderColor,
+                        ),
                       ),
                     ),
-                  ],
-                ));
+                  ),
+                );
               }),
               itemCount: _userTransactions.length,
             ),

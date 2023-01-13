@@ -21,6 +21,9 @@ class MyApp extends StatelessWidget {
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
+          button: TextStyle(
+            color: Colors.white,
+          ),
           headline1: TextStyle(
             fontFamily: "OpenSans",
             fontSize: 18,
@@ -43,10 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [
-    // Transaction(title: "New Shoes", amount: 69.99, date: DateTime.now()),
-    // Transaction(title: "Weekly Groceries", amount: 16.53, date: DateTime.now())
-  ];
+  final List<Transaction> _userTransactions = [];
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where(
@@ -57,17 +57,22 @@ class _MyHomePageState extends State<MyHomePage> {
     ).toList();
   }
 
-  void _addNewTransaction(String title, double amount, BuildContext bCtx) {
+  void _addNewTransaction(String title, double amount, DateTime date) {
     List<String> splittedList = amount.toString().split(".");
     String startPart = splittedList[0];
     if (splittedList[1].length > 2) {
       String endPart = splittedList[1].substring(0, 2);
       amount = double.parse(startPart + "." + endPart);
     }
-    final newTx =
-        Transaction(title: title, amount: amount, date: DateTime.now());
+    final newTx = Transaction(title: title, amount: amount, date: date);
     setState(() {
       _userTransactions.add(newTx);
+    });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
     });
   }
 
@@ -75,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showModalBottomSheet(
       context: ctx,
       builder: ((bCtx) {
-        return NewTransaction(_addNewTransaction, bCtx);
+        return NewTransaction(_addNewTransaction);
       }),
     );
   }
@@ -97,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(_recentTransactions),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),

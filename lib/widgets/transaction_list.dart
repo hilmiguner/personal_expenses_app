@@ -3,9 +3,10 @@ import 'package:personal_expenses_app/models/transaction.dart';
 import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
-  TransactionList(this._userTransactions);
+  TransactionList(this._userTransactions, this._deleteTransaction);
 
   final List<Transaction> _userTransactions;
+  final Function _deleteTransaction;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,33 @@ class TransactionList extends StatelessWidget {
                       backgroundColor: Theme.of(context).primaryColor,
                       radius: 30,
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        _deleteTransaction(
+                                            _userTransactions[index].id);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("Yes")),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text("No"))
+                                ],
+                                content: Text(
+                                    "Are you sure to delete named '${_userTransactions[index].title}'"),
+                                title: Text("DELETING TRANSACTION"),
+                              );
+                            },
+                          );
+                          //
+                        },
                         icon: Icon(
                           Icons.delete,
                           color: Theme.of(context).secondaryHeaderColor,

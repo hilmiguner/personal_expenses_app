@@ -1,27 +1,48 @@
 import "package:flutter/material.dart";
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addFunc;
-  final BuildContext modalBottomSheetCtx;
 
-  NewTransaction(this.addFunc, this.modalBottomSheetCtx);
+  NewTransaction(this.addFunc);
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
 }
 
 class _NewTransactionState extends State<NewTransaction> {
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+  DateTime _selectedDate;
 
-  void submitData() {
-    final String enteredTitle = titleController.text;
-    final double enteredAmount = double.parse(amountController.text);
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+  void _submitData() {
+    if (_amountController.text.isEmpty) {
       return;
     }
-    widget.addFunc(enteredTitle, enteredAmount, widget.modalBottomSheetCtx);
+    final String enteredTitle = _titleController.text;
+    final double enteredAmount = double.parse(_amountController.text);
+    final DateTime enteredDate = _selectedDate;
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || enteredDate == null) {
+      return;
+    }
+    widget.addFunc(enteredTitle, enteredAmount, enteredDate);
     Navigator.of(context).pop();
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(DateTime.now().year),
+            lastDate: DateTime(DateTime.now().year, 12, 31))
+        .then((selectedDate) {
+      if (selectedDate == null) {
+        return;
+      }
+      setState(() {
+        _selectedDate = selectedDate;
+      });
+    });
   }
 
   @override
@@ -44,10 +65,10 @@ class _NewTransactionState extends State<NewTransaction> {
                         Theme.of(context).textTheme.headline1.fontFamily,
                     fontSize: Theme.of(context).textTheme.headline1.fontSize),
               ),
-              controller: titleController,
+              controller: _titleController,
             ),
             TextField(
-              onSubmitted: (value) => submitData(),
+              onSubmitted: (_) => _presentDatePicker(),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 focusColor: Theme.of(context).primaryColor,
@@ -61,19 +82,51 @@ class _NewTransactionState extends State<NewTransaction> {
                         Theme.of(context).textTheme.headline1.fontFamily,
                     fontSize: Theme.of(context).textTheme.headline1.fontSize),
               ),
-              controller: amountController,
+              controller: _amountController,
             ),
             Container(
-              margin: EdgeInsets.only(top: 11),
-              child: TextButton(
-                onPressed: () => submitData(),
-                child: Text(
-                  "Add Transaction",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline1
-                      .apply(color: Theme.of(context).primaryColor),
-                ),
+              padding: EdgeInsets.only(top: 15),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? "No Date Choosen!"
+                          : "Picked Date: ${DateFormat("dd.MM.yyyy").format(_selectedDate)}",
+                      style: TextStyle(
+                        fontFamily:
+                            Theme.of(context).textTheme.headline1.fontFamily,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _presentDatePicker,
+                    child: Text("Choose Date",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontFamily:
+                              Theme.of(context).textTheme.headline1.fontFamily,
+                          fontSize:
+                              Theme.of(context).textTheme.headline1.fontSize,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor:
+                    MaterialStateProperty.all(Theme.of(context).primaryColor),
+              ),
+              onPressed: () => _submitData(),
+              child: Text(
+                "Add Transaction",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1
+                    .apply(color: Theme.of(context).textTheme.button.color),
               ),
             ),
           ],

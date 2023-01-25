@@ -4,7 +4,18 @@ import 'package:personal_expenses_app/widgets/transaction_list.dart';
 import 'package:personal_expenses_app/models/transaction.dart';
 import 'package:personal_expenses_app/widgets/chart.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  /* -------NO LANDSCAPE MODE-------
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final List<DeviceOrientation> prefferedOrientations = [
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ];
+  SystemChrome.setPreferredOrientations(prefferedOrientations); */
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -57,6 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ).toList();
   }
 
+  bool _showChart = false;
+
   void _addNewTransaction(String title, double amount, DateTime date) {
     List<String> splittedList = amount.toString().split(".");
     String startPart = splittedList[0];
@@ -87,22 +100,54 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      actions: [
+        IconButton(
+          onPressed: () => _showNewTransactionInputs(context),
+          icon: Icon(Icons.add),
+        ),
+      ],
+      title: Text('Personal Expenses'),
+    );
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            onPressed: () => _showNewTransactionInputs(context),
-            icon: Icon(Icons.add),
-          ),
-        ],
-        title: Text('Personal Expenses'),
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions, _deleteTransaction),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Show Chart",
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+                Switch(
+                  value: _showChart,
+                  onChanged: (value) {
+                    setState(() {
+                      _showChart = value;
+                    });
+                  },
+                )
+              ],
+            ),
+            _showChart
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.25,
+                    child: Chart(_recentTransactions),
+                  )
+                : Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.75,
+                    child:
+                        TransactionList(_userTransactions, _deleteTransaction),
+                  ),
           ],
         ),
       ),

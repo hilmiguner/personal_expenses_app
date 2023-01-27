@@ -24,7 +24,7 @@ class TransactionList extends StatelessWidget {
                     ),
                     Container(
                       child: Image.asset("assets/images/waiting.png"),
-                      height: constraints.maxHeight * 0.6,
+                      height: constraints.maxHeight * 0.5,
                     )
                   ],
                 )
@@ -52,50 +52,81 @@ class TransactionList extends StatelessWidget {
                           "${DateFormat("dd.MM.yyyy").format(_userTransactions[index].date)}",
                           style: Theme.of(context).textTheme.headline1,
                         ),
-                        trailing: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          radius: 30,
-                          child: IconButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            _deleteTransaction(
-                                                _userTransactions[index].id);
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("Yes")),
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("No"))
-                                    ],
-                                    content: Text(
-                                        "Are you sure to delete named '${_userTransactions[index].title}'"),
-                                    title: Text("DELETING TRANSACTION"),
+                        trailing: MediaQuery.of(context).size.width > 460
+                            ? TextButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                _deleteTransaction(
+                                                    _userTransactions[index]
+                                                        .id);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Yes")),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("No"))
+                                        ],
+                                        content: Text(
+                                            "Are you sure to delete named '${_userTransactions[index].title}'"),
+                                        title: Text("DELETING TRANSACTION"),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                              //
-                            },
-                            icon: Icon(
-                              Icons.delete,
-                              color: Theme.of(context).secondaryHeaderColor,
-                            ),
-                          ),
-                        ),
+                                icon: Icon(Icons.delete,
+                                    color: Theme.of(context).errorColor),
+                                label: Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                      color: Theme.of(context).errorColor),
+                                ))
+                            : IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () {
+                                                _deleteTransaction(
+                                                    _userTransactions[index]
+                                                        .id);
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Yes")),
+                                          TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("No"))
+                                        ],
+                                        content: Text(
+                                            "Are you sure to delete named '${_userTransactions[index].title}'"),
+                                        title: Text("DELETING TRANSACTION"),
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Theme.of(context).errorColor,
+                                ),
+                              ),
                       ),
                     );
                   }),
                   itemCount: _userTransactions.length,
                 ),
         );
-        ;
       },
     );
   }

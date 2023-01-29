@@ -102,11 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar = Platform.isIOS
+  Widget _buildAppBar() {
+    return Platform.isIOS
         ? CupertinoNavigationBar(
             middle: Text('Personal Expenses'),
             trailing: GestureDetector(
@@ -123,6 +120,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
             title: Text('Personal Expenses'),
           );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bool isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final PreferredSizeWidget appBar = _buildAppBar();
     final chartWidgetLandscape = Container(
       height: (mediaQuery.size.height -
               appBar.preferredSize.height -
